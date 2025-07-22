@@ -93,7 +93,7 @@ defmodule VsmPatternEngine.Temporal.Detector do
   defp detect_pattern_type(:burst, data) do
     # Detect sudden spikes or bursts
     case Analyzer.detect_bursts(data) do
-      {:ok, bursts} when length(bursts) > 0 ->
+      {:ok, [_ | _] = bursts} ->
         %Pattern{
           type: :burst,
           instances: bursts,
@@ -267,7 +267,7 @@ defmodule VsmPatternEngine.Temporal.Detector do
     # Estimate when signal will decay to ~1% of initial value
     initial = List.first(data, 0)
     if initial > 0 do
-      -log(0.01) / decay_rate
+      -:math.log(0.01) / decay_rate
     else
       nil
     end
