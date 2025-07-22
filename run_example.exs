@@ -1,11 +1,6 @@
-# VSM Pattern Engine Example
-# 
-# This script demonstrates the basic functionality of the VSM Pattern Engine
+# Run with: mix run run_example.exs
 
 IO.puts("=== VSM Pattern Engine Demo ===\n")
-
-# Start the application (simplified, without full OTP supervision)
-{:ok, _} = Finch.start_link(name: VsmPatternEngine.Finch)
 
 # 1. Temporal Pattern Detection
 IO.puts("1. Temporal Pattern Detection")
@@ -17,7 +12,12 @@ IO.puts("Generated periodic data with period ~10")
 
 {:ok, pattern_result} = VsmPatternEngine.Temporal.Detector.analyze(periodic_data)
 IO.puts("Detected #{length(pattern_result.patterns)} patterns")
-IO.puts("Dominant pattern: #{inspect(pattern_result.dominant_pattern && pattern_result.dominant_pattern.type)}")
+
+if pattern_result.dominant_pattern do
+  IO.puts("Dominant pattern type: #{pattern_result.dominant_pattern.type}")
+  IO.puts("Pattern strength: #{Float.round(pattern_result.dominant_pattern.strength, 2)}")
+end
+
 IO.puts("Confidence: #{Float.round(pattern_result.confidence, 2)}\n")
 
 # 2. Anomaly Detection
@@ -53,4 +53,32 @@ if correlation_result.strongest_correlation do
   IO.puts("Direction: #{correlation_result.strongest_correlation.direction}")
 end
 
+# 4. VSM Viability (when running with full application)
+IO.puts("\n4. VSM System State")
+IO.puts("------------------")
+
+# Since we're running without the full OTP app, we'll demonstrate the concepts
+vsm_state = %{
+  system_1: %{variety: 100, capacity: 150},
+  system_2: %{variety: 80, capacity: 120},
+  system_3: %{variety: 60, capacity: 100},
+  system_4: %{variety: 40, capacity: 80},
+  system_5: %{variety: 20, capacity: 50},
+  environment: %{variety: 200, uncertainty: 0.3}
+}
+
+system_variety = Enum.reduce(1..5, 0, fn i, acc ->
+  acc + vsm_state[:"system_#{i}"].variety
+end)
+
+variety_ratio = system_variety / vsm_state.environment.variety
+IO.puts("Total System Variety: #{system_variety}")
+IO.puts("Environment Variety: #{vsm_state.environment.variety}")
+IO.puts("Variety Ratio: #{Float.round(variety_ratio, 2)}")
+IO.puts("System Viable: #{variety_ratio >= 1.0}")
+
 IO.puts("\n=== Demo Complete ===")
+IO.puts("\nTo use the full engine with OTP supervision and vector store:")
+IO.puts("1. Start the application: Application.ensure_all_started(:vsm_pattern_engine)")
+IO.puts("2. Use VsmPatternEngine.Engine for coordinated analysis")
+IO.puts("3. Configure vector store connection in config/config.exs")

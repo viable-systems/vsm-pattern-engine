@@ -307,7 +307,7 @@ defmodule VsmPatternEngine.Anomaly.Detector do
     
     %{
       expected_variety: Statistics.mean(variety_values),
-      variety_std: Statistics.standard_deviation(variety_values),
+      variety_std: Statistics.stdev(variety_values),
       recursion_levels: analyze_recursion_levels(baseline),
       algedonic_threshold: calculate_algedonic_threshold(baseline),
       viable_range: calculate_viable_range(baseline)
@@ -356,7 +356,7 @@ defmodule VsmPatternEngine.Anomaly.Detector do
     # Calculate threshold for algedonic (pain/pleasure) signals
     values = Enum.map(baseline, &abs/1)
     mean = Statistics.mean(values)
-    std = Statistics.standard_deviation(values)
+    std = Statistics.stdev(values)
     
     mean + 4 * std  # Very high threshold for critical signals
   end

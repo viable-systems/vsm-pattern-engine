@@ -230,7 +230,7 @@ defmodule VsmPatternEngine.Temporal.Detector do
     
     if length(durations) > 1 do
       mean = Statistics.mean(durations)
-      std_dev = Statistics.standard_deviation(durations)
+      std_dev = Statistics.stdev(durations)
       
       # Coefficient of variation (lower is more regular)
       cv = std_dev / mean
@@ -249,7 +249,7 @@ defmodule VsmPatternEngine.Temporal.Detector do
   
   defp cycle_variability(cycles) do
     durations = Enum.map(cycles, & &1.duration)
-    Statistics.standard_deviation(durations)
+    Statistics.stdev(durations)
   end
   
   defp average_strength(patterns) do
